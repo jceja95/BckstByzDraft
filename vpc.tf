@@ -150,3 +150,19 @@ resource "aws_lb_listener" "front_end" {
     target_group_arn = aws_lb_target_group.front.arn
   }
 }
+
+resource "aws_autoscaling_group" "bar" {
+  name                      = "jesse-asg"
+  max_size                  = 2
+  min_size                  = 2
+  health_check_grace_period = 300
+  health_check_type         = "ELB"
+  desired_capacity          = 2
+  force_delete              = true
+  vpc_zone_identifier       = [var.public_subnet_count.id]
+}
+
+resource "aws_autoscaling_attachment" "jesse-asg-attach" {
+  autoscaling_group_name = aws_autoscaling_group.asg.id
+  elb                    = jesse-lb.bar.id
+}
